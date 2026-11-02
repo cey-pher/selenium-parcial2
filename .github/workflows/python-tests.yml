@@ -1,0 +1,36 @@
+name: Selenium Tests
+
+on: [push, pull_request]  # Se activa al subir código o crear un PR
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Linux en la nube (incluye Google Chrome)
+
+    steps:
+      - name: Descargar código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar pruebas en modo Headless (sin ventana visible)
+        env:
+          HEADLESS: "1"  # en CI no hay pantalla: utils.crear_driver() activa --headless
+        run: |
+          pytest --html=reporte_final.html --self-contained-html
+
+      - name: Guardar el reporte HTML como evidencia
+        if: always()  # se ejecuta aunque fallen las pruebas
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-selenium
+          path: |
+            reporte_final.html
+            evidencias/

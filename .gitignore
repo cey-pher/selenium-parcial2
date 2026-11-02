@@ -1,0 +1,5 @@
+__pycache__/
+.pytest_cache/
+evidencias/
+reporte_*.html
+run_diego/
